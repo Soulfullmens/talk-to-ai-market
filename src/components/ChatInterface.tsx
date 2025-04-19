@@ -1,10 +1,10 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from '@/hooks/use-toast';
+import { Mic, MicOff, Headphones } from 'lucide-react';
 
 interface Message {
   id: string;
@@ -17,6 +17,7 @@ export interface ChatInterfaceProps {
   agentName: string;
   agentIcon: string;
   agentDescription: string;
+  hasVoice?: boolean;
   onSendMessage?: (message: string) => Promise<string>;
 }
 
@@ -24,6 +25,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   agentName, 
   agentIcon, 
   agentDescription,
+  hasVoice,
   onSendMessage 
 }) => {
   const [messages, setMessages] = useState<Message[]>([
@@ -37,6 +39,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -62,7 +65,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     setIsLoading(true);
     
     try {
-      // Default response if no handler provided
       let response = `I'm ${agentName} and I'm still learning. This is a demo response.`;
       
       if (onSendMessage) {
@@ -96,6 +98,34 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     }
   };
 
+  const toggleVoice = async () => {
+    if (!hasVoice) return;
+
+    try {
+      if (!isListening) {
+        await navigator.mediaDevices.getUserMedia({ audio: true });
+        setIsListening(true);
+        toast({
+          title: "Voice activated",
+          description: "Listening for your message...",
+        });
+      } else {
+        setIsListening(false);
+        toast({
+          title: "Voice deactivated",
+          description: "Switched to text input mode",
+        });
+      }
+    } catch (error) {
+      console.error('Error accessing microphone:', error);
+      toast({
+        title: "Error",
+        description: "Unable to access microphone. Please check your permissions.",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <Card className="flex flex-col h-[calc(100vh-8rem)] shadow-lg">
       <CardHeader className="border-b px-4 py-3">
@@ -105,10 +135,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
               {agentIcon}
             </span>
           </div>
-          <div>
+          <div className="flex items-center gap-2">
             <CardTitle className="text-lg">{agentName}</CardTitle>
-            <p className="text-xs text-muted-foreground">{agentDescription}</p>
+            {hasVoice && (
+              <Headphones className="w-4 h-4 text-primary/80" />
+            )}
           </div>
+          <p className="text-xs text-muted-foreground">{agentDescription}</p>
         </div>
       </CardHeader>
       <CardContent className="flex-1 p-4 overflow-hidden">
@@ -135,10 +168,21 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Type your message..."
-            disabled={isLoading}
+            disabled={isLoading || isListening}
             className="flex-1"
           />
-          <Button onClick={handleSend} disabled={!input.trim() || isLoading}>
+          {hasVoice && (
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={toggleVoice}
+              className={isListening ? 'bg-primary/10' : ''}
+              disabled={isLoading}
+            >
+              {isListening ? <MicOff /> : <Mic />}
+            </Button>
+          )}
+          <Button onClick={handleSend} disabled={(!input.trim() && !isListening) || isLoading}>
             {isLoading ? "Sending..." : "Send"}
           </Button>
         </div>

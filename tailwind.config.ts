@@ -95,13 +95,24 @@ export default {
 					'50%': { 
 						boxShadow: '0 0 15px rgba(156, 123, 245, 0.7), 0 0 25px rgba(156, 123, 245, 0.6)',
 					}
+				},
+				'glow': {
+					'0%, 100%': { 
+						boxShadow: '0 0 5px rgba(156, 123, 245, 0.2)',
+						transform: 'scale(1)'
+					},
+					'50%': { 
+						boxShadow: '0 0 20px rgba(156, 123, 245, 0.4)',
+						transform: 'scale(1.02)'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'fade-in': 'fade-in 0.3s ease-out',
-				'button-glow': 'button-glow 2s ease-in-out infinite'
+				'button-glow': 'button-glow 2s ease-in-out infinite',
+				'glow': 'glow 2s ease-in-out infinite'
 			}
 		}
 	},

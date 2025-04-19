@@ -77,6 +77,14 @@
     @apply bg-background text-foreground font-sans;
     font-family: 'Inter', sans-serif;
   }
+
+  a, button, [role="button"], .clickable {
+    @apply transition-all duration-300;
+  }
+
+  a:hover, button:hover, [role="button"]:hover, .clickable:hover {
+    @apply shadow-[0_0_15px_rgba(156,123,245,0.4)];
+  }
 }
 
 .glass-card {
@@ -88,13 +96,13 @@
 }
 
 .chat-message-user {
-  @apply bg-primary text-primary-foreground rounded-2xl rounded-tr-none p-4 max-w-[80%] ml-auto;
+  @apply bg-primary text-primary-foreground rounded-2xl rounded-tr-none p-4 max-w-[80%] ml-auto hover:shadow-[0_0_15px_rgba(156,123,245,0.3)] transition-all duration-300;
 }
 
 .chat-message-agent {
-  @apply bg-secondary text-secondary-foreground rounded-2xl rounded-tl-none p-4 max-w-[80%] mr-auto;
+  @apply bg-secondary text-secondary-foreground rounded-2xl rounded-tl-none p-4 max-w-[80%] mr-auto hover:shadow-[0_0_15px_rgba(156,123,245,0.3)] transition-all duration-300;
 }
 
 .agent-card-hover {
-  @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+  @apply transition-all duration-300 hover:shadow-[0_0_20px_rgba(156,123,245,0.4)] hover:-translate-y-1;
 }

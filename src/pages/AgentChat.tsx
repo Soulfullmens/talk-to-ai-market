@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -11,6 +10,7 @@ interface Agent {
   name: string;
   description: string;
   icon: string;
+  hasVoice?: boolean;
   getResponse: (message: string) => Promise<string>;
 }
 
@@ -18,7 +18,6 @@ const AgentChat: React.FC = () => {
   const { agentId } = useParams();
   const navigate = useNavigate();
   
-  // Mock agents data - in a real app, this would come from a database or API
   const agents: Record<string, Agent> = {
     'travelly': {
       id: 'travelly',
@@ -26,7 +25,6 @@ const AgentChat: React.FC = () => {
       description: 'Your personal AI travel planner',
       icon: '✈️',
       getResponse: async (message: string) => {
-        // In a real app, this would call an API or LLM
         await new Promise(resolve => setTimeout(resolve, 1000)); // Fake delay
         
         if (message.toLowerCase().includes('paris')) {
@@ -42,7 +40,6 @@ const AgentChat: React.FC = () => {
       description: 'Create stunning pitch decks from conversations',
       icon: '📊',
       getResponse: async (message: string) => {
-        // In a real app, this would call an API or LLM
         await new Promise(resolve => setTimeout(resolve, 1000)); // Fake delay
         
         if (message.toLowerCase().includes('startup')) {
@@ -50,6 +47,22 @@ const AgentChat: React.FC = () => {
         }
         
         return "I can help you create a compelling pitch deck! Tell me about your business idea, target audience, and what you're looking to achieve with this presentation. I'll provide a structure and content suggestions for each slide.";
+      }
+    },
+    'voicebuddy': {
+      id: 'voicebuddy',
+      name: 'VoiceBuddy',
+      description: 'Your AI voice companion for natural conversations',
+      icon: '🎙️',
+      hasVoice: true,
+      getResponse: async (message: string) => {
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
+        
+        if (message.toLowerCase().includes('hello') || message.toLowerCase().includes('hi')) {
+          return "Hello! I'm VoiceBuddy, your AI voice companion. You can chat with me through text or voice. How can I assist you today?";
+        }
+        
+        return "I'd love to have a voice conversation with you! I can help you with various tasks, answer questions, or just chat. What would you like to discuss?";
       }
     }
   };
@@ -90,6 +103,7 @@ const AgentChat: React.FC = () => {
           agentIcon={currentAgent.icon}
           agentDescription={currentAgent.description}
           onSendMessage={currentAgent.getResponse}
+          hasVoice={currentAgent.hasVoice}
         />
       </div>
     </div>
